@@ -29,6 +29,9 @@ public class AssentoEntity {
 		this.filme = filme;
 	}
 
+	public AssentoEntity(int i, FilmeEntity batman) {
+	}
+
 	public UUID getId() {
 		return id;
 	}
@@ -59,5 +62,9 @@ public class AssentoEntity {
 
 	public void setFilme(FilmeEntity filme) {
 		this.filme = filme;
+	}
+
+	public boolean isOcupado() {
+		return ocupado;
 	}
 }
