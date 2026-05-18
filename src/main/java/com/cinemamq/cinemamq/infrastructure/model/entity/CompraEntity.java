@@ -38,6 +38,10 @@ public class CompraEntity {
 		this.valorPago = valorPago;
 	}
 
+	public CompraEntity(String s, String horario, FilmeEntity filme, AssentoEntity assento, Double valorIngresso) {
+	}
+
+
 	public UUID getId() {
 		return id;
 	}

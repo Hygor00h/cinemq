@@ -32,6 +32,9 @@ public class FilmeEntity {
 		this.valorIngresso = valorIngresso;
 	}
 
+	public FilmeEntity(String batman, String s, String s1, int i, double v) {
+	}
+
 	public UUID getId() {
 		return id;
 	}
