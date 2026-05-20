@@ -6,5 +6,5 @@ import java.util.UUID;
 public record CompraIngressoDTO(String nomeComprador,
 																UUID filmeId,
 																String horario,
-																UUID assentoId) implements Serializable {
+																Long assentoId) implements Serializable {
 }

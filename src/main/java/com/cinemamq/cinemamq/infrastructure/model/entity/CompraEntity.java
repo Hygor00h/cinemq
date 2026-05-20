@@ -1,20 +1,26 @@
 package com.cinemamq.cinemamq.infrastructure.model.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.domain.Persistable;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "compras")
-public class CompraEntity {
+public class CompraEntity implements Persistable<UUID> {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
 	private String nomeComprador;
 
 	private String horario;
+
+	private String status;
+
+	private Integer numeroAssento;
+
+	private String mensagemErro;
 
 	@ManyToOne
 	@JoinColumn
@@ -29,10 +35,13 @@ public class CompraEntity {
 	public CompraEntity() {
 	}
 
-	public CompraEntity(UUID id, String nomeComprador, String horario, FilmeEntity filme, AssentoEntity assento, Double valorPago) {
+	public CompraEntity(UUID id, String nomeComprador, String horario, String status, Integer numeroAssento, String mensagemErro, FilmeEntity filme, AssentoEntity assento, Double valorPago) {
 		this.id = id;
 		this.nomeComprador = nomeComprador;
 		this.horario = horario;
+		this.status = status;
+		this.numeroAssento = numeroAssento;
+		this.mensagemErro = mensagemErro;
 		this.filme = filme;
 		this.assento = assento;
 		this.valorPago = valorPago;
@@ -42,8 +51,23 @@ public class CompraEntity {
 	}
 
 
+	@Transient
+	private boolean isNew = true;
+
+	@PostLoad
+	@PostPersist
+	public void markNotNew() {
+		this.isNew = false; // Se buscou do banco ou acabou de salvar, não é mais nova
+	}
+
+	@Override
+	public boolean isNew() {
+		return this.isNew; // O Spring Data vai ler isso aqui antes de decidir entre persist e merge
+	}
+
+	@Override
 	public UUID getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(UUID id) {
@@ -88,5 +112,28 @@ public class CompraEntity {
 
 	public void setValorPago(Double valorPago) {
 		this.valorPago = valorPago;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Integer getNumeroAssento() {
+		return numeroAssento;
+	}
+
+	public void setNumeroAssento(Integer numeroAssento) {
+		this.numeroAssento = numeroAssento;
+	}
+
+	public String getMensagemErro() {
+		return mensagemErro;
+	}
+
+	public void setMensagemErro(String mensagemErro) {
+		this.mensagemErro = mensagemErro;
 	}
 }
