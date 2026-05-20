@@ -9,8 +9,8 @@ import java.util.UUID;
 public class AssentoEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private Integer numero;
 	private Boolean ocupado = false;
@@ -22,7 +22,7 @@ public class AssentoEntity {
 	public AssentoEntity() {
 	}
 
-	public AssentoEntity(UUID id, Integer numero, Boolean ocupado, FilmeEntity filme) {
+	public AssentoEntity(Long id, Integer numero, Boolean ocupado, FilmeEntity filme) {
 		this.id = id;
 		this.numero = numero;
 		this.ocupado = ocupado;
@@ -32,11 +32,11 @@ public class AssentoEntity {
 	public AssentoEntity(int i, FilmeEntity batman) {
 	}
 
-	public UUID getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

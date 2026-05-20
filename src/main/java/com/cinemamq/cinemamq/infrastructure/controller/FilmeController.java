@@ -1,6 +1,9 @@
 package com.cinemamq.cinemamq.infrastructure.controller;
 
+import com.cinemamq.cinemamq.infrastructure.model.dto.AssentoDto;
+import com.cinemamq.cinemamq.infrastructure.model.entity.AssentoEntity;
 import com.cinemamq.cinemamq.infrastructure.model.entity.FilmeEntity;
+import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
