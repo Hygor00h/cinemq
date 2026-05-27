@@ -17,7 +17,11 @@ public class FilmeEntity {
 	private String nome;
 	private String genero;
 	private String duracao;
+
+	@Column(name = "faixa_etaria")
 	private Integer faixaEtaria;
+
+	@Column(name = "valor_ingresso")
 	private Double valorIngresso;
 
 	public FilmeEntity() {

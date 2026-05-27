@@ -12,14 +12,17 @@ public class CompraEntity implements Persistable<UUID> {
 	@Id
 	private UUID id;
 
+	@Column(name = "nome_comprador")
 	private String nomeComprador;
 
 	private String horario;
 
 	private String status;
 
-	private Integer numeroAssento;
+//	@Column(name = "numero_assento")
+//	private Integer numeroAssento;
 
+	@Column(name = "mensagem_erro")
 	private String mensagemErro;
 
 	@ManyToOne
@@ -27,24 +30,22 @@ public class CompraEntity implements Persistable<UUID> {
 	private FilmeEntity filme;
 
 	@ManyToOne
-	@JoinColumn
+	@JoinColumn(name = "assento_id")
 	private AssentoEntity assento;
 
-	private Double valorPago;
+//	private Double valorPago;
 
 	public CompraEntity() {
 	}
 
-	public CompraEntity(UUID id, String nomeComprador, String horario, String status, Integer numeroAssento, String mensagemErro, FilmeEntity filme, AssentoEntity assento, Double valorPago) {
+	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, FilmeEntity filme, AssentoEntity assento) {
 		this.id = id;
 		this.nomeComprador = nomeComprador;
 		this.horario = horario;
 		this.status = status;
-		this.numeroAssento = numeroAssento;
 		this.mensagemErro = mensagemErro;
 		this.filme = filme;
 		this.assento = assento;
-		this.valorPago = valorPago;
 	}
 
 	public CompraEntity(String s, String horario, FilmeEntity filme, AssentoEntity assento, Double valorIngresso) {
@@ -106,13 +107,13 @@ public class CompraEntity implements Persistable<UUID> {
 		this.assento = assento;
 	}
 
-	public Double getValorPago() {
-		return valorPago;
-	}
-
-	public void setValorPago(Double valorPago) {
-		this.valorPago = valorPago;
-	}
+//	public Double getValorPago() {
+//		return valorPago;
+//	}
+//
+//	public void setValorPago(Double valorPago) {
+//		this.valorPago = valorPago;
+//	}
 
 	public String getStatus() {
 		return status;
@@ -121,13 +122,13 @@ public class CompraEntity implements Persistable<UUID> {
 		this.status = status;
 	}
 
-	public Integer getNumeroAssento() {
-		return numeroAssento;
-	}
-
-	public void setNumeroAssento(Integer numeroAssento) {
-		this.numeroAssento = numeroAssento;
-	}
+//	public Integer getNumeroAssento() {
+//		return numeroAssento;
+//	}
+//
+//	public void setNumeroAssento(Integer numeroAssento) {
+//		this.numeroAssento = numeroAssento;
+//	}
 
 	public String getMensagemErro() {
 		return mensagemErro;

@@ -12,7 +12,9 @@ public class AssentoEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "numero_visivel")
 	private Integer numero;
+
 	private Boolean ocupado = false;
 
 	@ManyToOne
