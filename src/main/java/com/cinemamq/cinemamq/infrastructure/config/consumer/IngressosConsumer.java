@@ -68,10 +68,10 @@ public class IngressosConsumer {
 			}
 
 			// Validação 2: O assento pertence ao filme correto?
-			if (!assento.getFilme().getId().equals(pedido.dados().filmeId())) {
-				marcarComoErro(pedido.pedidoId(), "Este assento não pertence ao filme selecionado.");
-				return;
-			}
+//			if (!assento.getFilme().getId().equals(pedido.dados().filmeId())) {
+//				marcarComoErro(pedido.pedidoId(), "Este assento não pertence ao filme selecionado.");
+//				return;
+//			}
 
 			// Validação 3: O assento já está ocupado? (A regra do primeiro a chegar)
 			if (assento.isOcupado()) {
@@ -97,8 +97,15 @@ public class IngressosConsumer {
 		CompraEntity compra = compraRepository.findById(pedidoId)
 						.orElseThrow(() -> new RuntimeException("Pedido não encontrado no banco"));
 
+		if(compra.getStatus().equals("PROCESSANDO")){
+			compra.setStatus(null);
+		}
+		if(compra.getStatus().equals(null)){
+			compra.setStatus("SUCESSO");
+		}
+
 		// 2. Atualiza os dados com o sucesso da reserva
-		compra.setStatus("SUCESSO");
+		//compra.setStatus("SUCESSO");
 		compra.setAssento(assento); // Lembra da relação @ManyToOne que arrumamos?
 		compra.setNomeComprador(dto.nomeComprador());
 		compra.setHorario(dto.horario());
