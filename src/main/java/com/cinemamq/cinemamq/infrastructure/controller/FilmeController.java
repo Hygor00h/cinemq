@@ -3,8 +3,10 @@ package com.cinemamq.cinemamq.infrastructure.controller;
 
 import com.cinemamq.cinemamq.infrastructure.model.entity.AssentoEntity;
 import com.cinemamq.cinemamq.infrastructure.model.entity.FilmeEntity;
+import com.cinemamq.cinemamq.infrastructure.model.entity.SalaEntity;
 import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
+import com.cinemamq.cinemamq.infrastructure.repository.SalaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,22 @@ public class FilmeController {
 	@Autowired
 	private AssentoRepository assentoRepository;
 
+	@Autowired
+	private SalaRepository salaRepository;
+
+	@GetMapping("/{filmeId}/salas")
+	public ResponseEntity<List<SalaEntity>> obterSalasPorFilme(@PathVariable("filmeId") UUID filmeId) {
+
+		// Agora sim: Passando o ID do filme para a query que busca por filme!
+		List<SalaEntity> salas = salaRepository.buscarSalasPorFilmeIdCustom(filmeId);
+
+		if (salas.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(salas);
+	}
+
 	@GetMapping
 	public List<FilmeEntity> findAll(){
 		return filmeRepository.findAll();
@@ -32,7 +50,7 @@ public class FilmeController {
 
 	@GetMapping("/{filmes}/assentos-disponiveis")
 	public ResponseEntity<List<AssentoEntity>> listarTodosAssentosDisponiveis(@PathVariable("filmes") UUID filmeId){
-		List<AssentoEntity> assentosLivres = assentoRepository.findByFilmeIdAndOcupadoFalse(filmeId);
+		List<AssentoEntity> assentosLivres = assentoRepository.findBySalaIdAndOcupadoFalse(filmeId);
 		return ResponseEntity.ok(assentosLivres);
 	}
 

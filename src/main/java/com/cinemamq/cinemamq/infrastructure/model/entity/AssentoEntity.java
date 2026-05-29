@@ -2,7 +2,6 @@ package com.cinemamq.cinemamq.infrastructure.model.entity;
 
 import jakarta.persistence.*;
 
-import java.util.UUID;
 
 @Entity
 @Table(name = "assentos")
@@ -18,20 +17,17 @@ public class AssentoEntity {
 	private Boolean ocupado = false;
 
 	@ManyToOne
-	@JoinColumn(name = "filme_id")
-	private FilmeEntity filme;
+	@JoinColumn(name = "sala_id")
+	private SalaEntity sala;
 
 	public AssentoEntity() {
 	}
 
-	public AssentoEntity(Long id, Integer numero, Boolean ocupado, FilmeEntity filme) {
+	public AssentoEntity(Long id, Integer numero, Boolean ocupado, SalaEntity sala) {
 		this.id = id;
 		this.numero = numero;
 		this.ocupado = ocupado;
-		this.filme = filme;
-	}
-
-	public AssentoEntity(int i, FilmeEntity batman) {
+		this.sala = sala;
 	}
 
 	public Long getId() {
@@ -58,12 +54,12 @@ public class AssentoEntity {
 		this.ocupado = ocupado;
 	}
 
-	public FilmeEntity getFilme() {
-		return filme;
+	public SalaEntity getSala() {
+		return sala;
 	}
 
-	public void setFilme(FilmeEntity filme) {
-		this.filme = filme;
+	public void setSala(SalaEntity sala) {
+		this.sala = sala;
 	}
 
 	public boolean isOcupado() {

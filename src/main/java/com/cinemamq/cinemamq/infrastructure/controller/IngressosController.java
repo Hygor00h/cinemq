@@ -44,7 +44,7 @@ public class IngressosController {
 		// 2. Cria a compra no banco com status PROCESSANDO
 		CompraEntity compra = new CompraEntity();
 		compra.setId(pedidoId);
-		compra.setStatus("PROCESSANDO");
+		compra.setStatus("SUCESSO");
 		compra.setHorario(dto.horario());
 		compra.setNomeComprador(dto.nomeComprador());
 
@@ -93,13 +93,14 @@ public class IngressosController {
 
 	@GetMapping("/status/{id}")
 	public ResponseEntity<?> consultarStatus(@PathVariable UUID id) {
-		CompraEntity compra = compraRepository.findById(id).orElse(null);
+		CompraEntity compra = compraRepository.findById(id)
+						.orElseThrow(() -> new RuntimeException("Compra não encontrada"));
 
 		if (compra == null) {
 			return ResponseEntity.notFound().build();
 		}
 
-		// De acordo com o status atualizado pelo Consumer, respondemos o front-end
+// De acordo com o status atualizado pelo Consumer, respondemos o front-end
 		return switch (compra.getStatus()) {
 			case "PROCESSANDO" -> ResponseEntity.ok().body(compra.getStatus());
 			case "SUCESSO" -> ResponseEntity.ok(compra); // Devolve o comprovante completo
@@ -107,4 +108,9 @@ public class IngressosController {
 			default -> ResponseEntity.internalServerError().build();
 		};
 	}
+
+//	@PostMapping("/confirma")
+//	public ResponseEntity<> confirmaPagamento(){
+//
+//	}
 }
