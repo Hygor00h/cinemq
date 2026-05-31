@@ -2,7 +2,7 @@ package com.cinemamq.cinemamq.infrastructure.model.entity;
 
 import jakarta.persistence.*;
 
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "salas")
@@ -20,6 +20,9 @@ public class SalaEntity {
 	@JoinColumn(name = "filme_id")
 	private FilmeEntity filme;
 
+	@OneToMany(mappedBy = "sala", fetch = FetchType.LAZY)
+	private Set<AssentoEntity> assentos = new LinkedHashSet<>();
+
 	public SalaEntity() {
 	}
 
@@ -27,6 +30,15 @@ public class SalaEntity {
 		this.id = id;
 		this.nomeSala = nomeSala;
 		this.filme = filme;
+	}
+
+
+	public Set<AssentoEntity> getAssentos() {
+		return assentos;
+	}
+
+	public void setAssentos(Set<AssentoEntity> assentos) {
+		this.assentos = assentos;
 	}
 
 	public UUID getId() {

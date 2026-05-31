@@ -48,10 +48,13 @@ public class FilmeController {
 		return filmeRepository.findAll();
 	}
 
-	@GetMapping("/{filmes}/assentos-disponiveis")
-	public ResponseEntity<List<AssentoEntity>> listarTodosAssentosDisponiveis(@PathVariable("filmes") UUID filmeId){
-		List<AssentoEntity> assentosLivres = assentoRepository.findBySalaIdAndOcupadoFalse(filmeId);
-		return ResponseEntity.ok(assentosLivres);
+	@GetMapping("/salas/{salaId}/com-cadeiras")
+	public ResponseEntity<SalaEntity> obterSalaEAssentos(@PathVariable UUID salaId) {
+
+		// Busca a sala usando a query customizada com JOIN FETCH
+		return salaRepository.buscarSalaComAssentos(salaId)
+						.map(sala -> ResponseEntity.ok(sala)) // Se achar a sala, devolve 200 OK com ela
+						.orElse(ResponseEntity.notFound().build()); // Se não achar, devolve 404
 	}
 
 }

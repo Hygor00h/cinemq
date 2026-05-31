@@ -1,5 +1,6 @@
 package com.cinemamq.cinemamq.infrastructure.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
@@ -18,6 +19,7 @@ public class AssentoEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "sala_id")
+	@JsonIgnore
 	private SalaEntity sala;
 
 	public AssentoEntity() {
