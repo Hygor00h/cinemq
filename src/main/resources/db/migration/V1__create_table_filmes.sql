@@ -22,7 +22,7 @@ CREATE TABLE salas (
 );
 
 CREATE TABLE assentos (
-                          id BIGSERIAL NOT NULL,
+                          id UUID DEFAULT uuid_generate_v4(),
                           numero_visivel INTEGER NOT NULL,
                           ocupado BOOLEAN DEFAULT FALSE,
                           sala_id UUID NOT NULL, -- Correto, mapeando para a sala
@@ -35,12 +35,14 @@ CREATE TABLE compras (
                          nome_comprador VARCHAR(255),
                          horario VARCHAR(255),
                          status VARCHAR(250),
-                         assento_id BIGINT,
-                         filmes_id UUID,
+                         assento_id UUID,
+                         filme_id UUID,
+                         sala_id UUID,
                          mensagem_erro VARCHAR(255),
                          CONSTRAINT pk_compras PRIMARY KEY (id),
                          CONSTRAINT fk_compra_assento FOREIGN KEY (assento_id) REFERENCES assentos(id),
-                         CONSTRAINT fk_compra_filme FOREIGN KEY (filmes_id) REFERENCES filmes(id)
+                         CONSTRAINT fk_compras_sala FOREIGN KEY (sala_id) REFERENCES public.salas(id),
+                         CONSTRAINT fk_compras_filme FOREIGN KEY (filme_id) REFERENCES public.filmes(id)
 );
 
 -- =========================================================================
@@ -49,7 +51,7 @@ CREATE TABLE compras (
 
 -- Passo A: Cadastra os Filmes primeiro
 INSERT INTO filmes (nome, genero, duracao, faixa_etaria, valor_ingresso) VALUES
-                                                                             ('Velozes e Furiosos', 'Ação/Drama', '3 horas', 16, 15.00),
+                                                                             ('Velozes e Furiosos', 'Ação/Drama', '3 ho', 16, 15.00),
                                                                              ('Carros', 'Animação', '2 horas', 0, 12.00);
 
 -- Passo B: Cadastra as Salas vinculando aos filmes que ACABARAM de ser criados

@@ -1,6 +1,8 @@
 package com.cinemamq.cinemamq.infrastructure.model.entity;
 
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +23,7 @@ public class FilmeEntity {
 	private Integer faixaEtaria;
 
 	@Column(name = "valor_ingresso")
-	private Double valorIngresso;
+	private BigDecimal valorIngresso;
 
 	@OneToMany(mappedBy = "filme")
 	private List<SalaEntity> salas = new ArrayList<>();
@@ -29,7 +31,7 @@ public class FilmeEntity {
 	public FilmeEntity() {
 	}
 
-	public FilmeEntity(UUID id, String nome, String genero, String duracao, Integer faixaEtaria, Double valorIngresso) {
+	public FilmeEntity(UUID id, String nome, String genero, String duracao, Integer faixaEtaria, BigDecimal valorIngresso) {
 		this.id = id;
 		this.nome = nome;
 		this.genero = genero;
@@ -81,11 +83,11 @@ public class FilmeEntity {
 		this.faixaEtaria = faixaEtaria;
 	}
 
-	public Double getValorIngresso() {
+	public BigDecimal getValorIngresso() {
 		return valorIngresso;
 	}
 
-	public void setValorIngresso(Double valorIngresso) {
+	public void setValorIngresso(BigDecimal valorIngresso) {
 		this.valorIngresso = valorIngresso;
 	}
 }

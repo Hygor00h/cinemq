@@ -2,6 +2,7 @@ package com.cinemamq.cinemamq.infrastructure.mapper;
 
 import com.cinemamq.cinemamq.infrastructure.model.dto.CompraIngressoDTO;
 import com.cinemamq.cinemamq.infrastructure.model.entity.CompraEntity;
+import com.cinemamq.cinemamq.infrastructure.model.response.CompraResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -23,4 +24,17 @@ public interface CompraMapper {
 	// 💡 IGNORE: Avisamos ao MapStruct para não tentar mapear o UUID para a SalaEntity complexa
 	@Mapping(target = "sala", ignore = true)
 	CompraEntity toEntity(CompraIngressoDTO dto);
+
+
+	@Mapping(target = "nomeComprador", source = "compraEntity.nomeComprador")
+	@Mapping(target = "filme", source = "compraEntity.filme.nome")
+	@Mapping(target = "horario", source = "compraEntity.horario")
+	@Mapping(target = "sala", source = "compraEntity.sala.nomeSala")
+	@Mapping(target = "numero", source = "compraEntity.assento.numero")
+	CompraResponse  toResponse(CompraEntity compraEntity);
+
+
+
+
+
 }

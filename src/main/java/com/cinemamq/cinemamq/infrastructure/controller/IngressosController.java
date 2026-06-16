@@ -5,6 +5,7 @@ import com.cinemamq.cinemamq.infrastructure.mapper.CompraMapper;
 import com.cinemamq.cinemamq.infrastructure.model.dto.CompraIngressoDTO;
 import com.cinemamq.cinemamq.infrastructure.model.dto.PedidoFilaDTO;
 import com.cinemamq.cinemamq.infrastructure.model.entity.CompraEntity;
+import com.cinemamq.cinemamq.infrastructure.model.response.CompraResponse;
 import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.CompraRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
@@ -39,7 +40,7 @@ public class IngressosController {
 	private CompraMapper compraMapper;
 
 	@PostMapping("/comprar")
-	public ResponseEntity<CompraIngressoDTO> comprar(@RequestBody CompraIngressoDTO dto) {
+	public ResponseEntity<CompraResponse> comprar(@RequestBody CompraIngressoDTO dto) {
 		UUID pedidoId = UUID.randomUUID();
 
 		CompraEntity compra = new CompraEntity();
@@ -61,7 +62,7 @@ public class IngressosController {
 
 		rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_INGRESSOS, RabbitMQConfig.ROUTING_KEY_INGRESSOS, pedidoFila);
 
-		return ResponseEntity.accepted().body(compraMapper.toDto(valor));
+		return ResponseEntity.accepted().body(compraMapper.toResponse(valor));
 	}
 
 
