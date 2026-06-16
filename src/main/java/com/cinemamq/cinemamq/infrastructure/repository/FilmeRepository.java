@@ -4,8 +4,11 @@ import com.cinemamq.cinemamq.infrastructure.model.entity.FilmeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface FilmeRepository extends JpaRepository<FilmeEntity, UUID> {
+
+	//Optional<FilmeEntity> findById(UUID id);
 }

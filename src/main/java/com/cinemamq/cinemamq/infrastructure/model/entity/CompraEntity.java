@@ -3,6 +3,8 @@ package com.cinemamq.cinemamq.infrastructure.model.entity;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -16,24 +18,23 @@ public class CompraEntity implements Persistable<UUID> {
 	private String nomeComprador;
 
 	private String horario;
-
 	private String status;
-
-//	@Column(name = "numero_assento")
-//	private Integer numeroAssento;
 
 	@Column(name = "mensagem_erro")
 	private String mensagemErro;
 
-	@ManyToOne
-	@JoinColumn
-	private FilmeEntity filme;
 
 	@ManyToOne
 	@JoinColumn(name = "assento_id")
 	private AssentoEntity assento;
 
-//	private Double valorPago;
+	@ManyToOne
+	@JoinColumn(name = "sala_id")
+	private SalaEntity sala;
+
+	@ManyToOne
+	@JoinColumn(name = "filme_id")
+	private FilmeEntity filme;
 
 	public CompraEntity() {
 	}
@@ -107,14 +108,6 @@ public class CompraEntity implements Persistable<UUID> {
 		this.assento = assento;
 	}
 
-//	public Double getValorPago() {
-//		return valorPago;
-//	}
-//
-//	public void setValorPago(Double valorPago) {
-//		this.valorPago = valorPago;
-//	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -122,19 +115,19 @@ public class CompraEntity implements Persistable<UUID> {
 		this.status = status;
 	}
 
-//	public Integer getNumeroAssento() {
-//		return numeroAssento;
-//	}
-//
-//	public void setNumeroAssento(Integer numeroAssento) {
-//		this.numeroAssento = numeroAssento;
-//	}
-
 	public String getMensagemErro() {
 		return mensagemErro;
 	}
 
 	public void setMensagemErro(String mensagemErro) {
 		this.mensagemErro = mensagemErro;
+	}
+
+	public SalaEntity getSala() {
+		return sala;
+	}
+
+	public void setSala(SalaEntity sala) {
+		this.sala = sala;
 	}
 }

@@ -8,15 +8,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
-public interface SalaRepository extends JpaRepository<SalaEntity, Long> {
+public interface SalaRepository extends JpaRepository<SalaEntity, UUID> {
 
-	List<SalaEntity> findByFilmeId(UUID filmeId);
+	//Optional<SalaEntity> findById(UUID filmeId);
 
 	//1 DISTINCT depois do SELECT para resolver a multiplicação no json ou usar o SET na entity no logar do LIST
-	@Query("SELECT DISTINCT s FROM SalaEntity s WHERE s.filme.id = :filmeId")
+//	@Query("SELECT DISTINCT s FROM SalaEntity s LEFT JOIN FETCH s.assentos WHERE s.filme.id = :filmeId")
+//	SalaEntity buscarSalasPorFilmeIdCustom(@Param("filmeId") UUID filmeId);
+
+	@Query("SELECT s FROM SalaEntity s WHERE s.filme.id = :filmeId")
 	List<SalaEntity> buscarSalasPorFilmeIdCustom(@Param("filmeId") UUID filmeId);
 
 	@Query("SELECT s FROM SalaEntity s LEFT JOIN FETCH s.assentos WHERE s.id = :salaId")

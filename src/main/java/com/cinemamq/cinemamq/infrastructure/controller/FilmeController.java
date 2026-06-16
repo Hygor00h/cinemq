@@ -1,22 +1,22 @@
 package com.cinemamq.cinemamq.infrastructure.controller;
 
-
-import com.cinemamq.cinemamq.infrastructure.model.entity.AssentoEntity;
+import com.cinemamq.cinemamq.infrastructure.mapper.SalaMapper;
+import com.cinemamq.cinemamq.infrastructure.model.dto.SalaDto;
 import com.cinemamq.cinemamq.infrastructure.model.entity.FilmeEntity;
 import com.cinemamq.cinemamq.infrastructure.model.entity.SalaEntity;
 import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.SalaRepository;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/filmes")
 public class FilmeController {
@@ -30,17 +30,21 @@ public class FilmeController {
 	@Autowired
 	private SalaRepository salaRepository;
 
-	@GetMapping("/{filmeId}/salas")
-	public ResponseEntity<List<SalaEntity>> obterSalasPorFilme(@PathVariable("filmeId") UUID filmeId) {
+	@Autowired
+	private SalaMapper salaMapper;
 
-		// Agora sim: Passando o ID do filme para a query que busca por filme!
+	@GetMapping("/{filmeId}/salas")
+	public ResponseEntity<List<SalaDto>> obterSalasPorFilme(@PathVariable("filmeId") UUID filmeId) {
+
 		List<SalaEntity> salas = salaRepository.buscarSalasPorFilmeIdCustom(filmeId);
 
-		if (salas.isEmpty()) {
+		if (StringUtils.isEmpty(String.valueOf(salas))) {
 			return ResponseEntity.noContent().build();
 		}
 
-		return ResponseEntity.ok(salas);
+		List<SalaDto> dtos = salaMapper.toDtoList(salas);
+
+		return ResponseEntity.ok(dtos);
 	}
 
 	@GetMapping
@@ -51,10 +55,9 @@ public class FilmeController {
 	@GetMapping("/salas/{salaId}/com-cadeiras")
 	public ResponseEntity<SalaEntity> obterSalaEAssentos(@PathVariable UUID salaId) {
 
-		// Busca a sala usando a query customizada com JOIN FETCH
 		return salaRepository.buscarSalaComAssentos(salaId)
-						.map(sala -> ResponseEntity.ok(sala)) // Se achar a sala, devolve 200 OK com ela
-						.orElse(ResponseEntity.notFound().build()); // Se não achar, devolve 404
+						.map(sala -> ResponseEntity.ok(sala))
+						.orElse(ResponseEntity.notFound().build());
 	}
 
 }
