@@ -3,6 +3,8 @@ package com.cinemamq.cinemamq.infrastructure.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 
 @Entity
 @Table(name = "assentos")
@@ -10,7 +12,7 @@ public class AssentoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private UUID id;
 
 	@Column(name = "numero_visivel")
 	private Integer numero;
@@ -25,18 +27,18 @@ public class AssentoEntity {
 	public AssentoEntity() {
 	}
 
-	public AssentoEntity(Long id, Integer numero, Boolean ocupado, SalaEntity sala) {
+	public AssentoEntity(UUID id, Integer numero, Boolean ocupado, SalaEntity sala) {
 		this.id = id;
 		this.numero = numero;
 		this.ocupado = ocupado;
 		this.sala = sala;
 	}
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

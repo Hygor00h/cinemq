@@ -7,13 +7,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AssentoRepository extends JpaRepository<AssentoEntity, Long> {
+public interface AssentoRepository extends JpaRepository<AssentoEntity, UUID> {
 
 //	@Query(value = "SELECT * FROM public.assentos")
 //	List<AssentoEntity>findByFilmeIdAndOcupadoFalse(UUID filmeId);
+
+	//Optional<AssentoEntity> findById(UUID id);
 
 	List<AssentoEntity> findBySalaIdAndOcupadoFalse(UUID salaId);
 
