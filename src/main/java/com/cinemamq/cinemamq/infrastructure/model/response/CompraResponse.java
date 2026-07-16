@@ -1,6 +1,7 @@
 package com.cinemamq.cinemamq.infrastructure.model.response;
 
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CompraResponse {
 
@@ -8,14 +9,20 @@ public class CompraResponse {
 	private String filme;
 	private String horario;
 	private String sala;
-	private Integer numero;
+	private Integer cadeira;
+	private BigDecimal valorIngresso;
+	private BigDecimal valorTotal;
+	private List<String> itensConsumo;
 
-	public CompraResponse(String nomeComprador, String filme, String horario, String sala, Integer numero) {
+	public CompraResponse(String nomeComprador, String filme, String horario, String sala, Integer numero, BigDecimal valor,BigDecimal valorTotal,List<String> itensConsumo) {
 		this.nomeComprador = nomeComprador;
 		this.filme = filme;
 		this.horario = horario;
 		this.sala = sala;
-		this.numero = numero;
+		this.cadeira = numero;
+		this.valorIngresso = valor;
+		this.valorTotal = valorTotal;
+		this.itensConsumo = itensConsumo;
 	}
 
 	public CompraResponse() {
@@ -53,11 +60,35 @@ public class CompraResponse {
 		this.sala = sala;
 	}
 
-	public Integer getNumero() {
-		return numero;
+	public Integer getCadeira() {
+		return cadeira;
 	}
 
-	public void setNumero(Integer numero) {
-		this.numero = numero;
+	public void setCadeira(Integer cadeira) {
+		this.cadeira = cadeira;
+	}
+
+	public BigDecimal getValorIngresso() {
+		return valorIngresso;
+	}
+
+	public void setValorIngresso(BigDecimal valorIngresso) {
+		this.valorIngresso = valorIngresso;
+	}
+
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	public List<String> getItensConsumo() {
+		return itensConsumo;
+	}
+
+	public void setItensConsumo(List<String> itensConsumo) {
+		this.itensConsumo = itensConsumo;
 	}
 }

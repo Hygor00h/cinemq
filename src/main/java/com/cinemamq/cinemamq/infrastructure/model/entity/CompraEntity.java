@@ -1,16 +1,17 @@
 package com.cinemamq.cinemamq.infrastructure.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Persistable;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.beans.XMLEncoder;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Entity
 @Table(name = "compras")
 public class CompraEntity implements Persistable<UUID> {
-
+//criar o ingresso
 	@Id
 	private UUID id;
 
@@ -36,20 +37,54 @@ public class CompraEntity implements Persistable<UUID> {
 	@JoinColumn(name = "filme_id")
 	private FilmeEntity filme;
 
+	@OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<CompraProdutoEntity> itens = new ArrayList<>();
+
 	public CompraEntity() {
 	}
 
-	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, FilmeEntity filme, AssentoEntity assento) {
+	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, AssentoEntity assento, SalaEntity sala, FilmeEntity filme, List<CompraProdutoEntity> itens, boolean isNew) {
 		this.id = id;
 		this.nomeComprador = nomeComprador;
 		this.horario = horario;
 		this.status = status;
 		this.mensagemErro = mensagemErro;
-		this.filme = filme;
 		this.assento = assento;
+		this.sala = sala;
+		this.filme = filme;
+		this.itens = itens;
+		this.isNew = isNew;
 	}
 
-	public CompraEntity(String s, String horario, FilmeEntity filme, AssentoEntity assento, Double valorIngresso) {
+	public CompraEntity(String s, String horario, FilmeEntity filme, AssentoEntity assento, Double valorIngresso, List<CompraProdutoEntity> itens) {
+	}
+
+
+	// 💡 Método para calcular o valor total (Ingresso + Lanchonete)
+	public BigDecimal getCalculaValorTotal() {
+		BigDecimal total = BigDecimal.ZERO;
+
+		// 1. Soma o valor do ingresso se o filme estiver associado
+		if (this.filme != null && this.filme.getValorIngresso() != null) {
+			total = total.add(this.filme.getValorIngresso());
+		}
+
+		// 2. Soma o valor de cada produto da lanchonete (Preço x Quantidade)
+		if (this.itens != null && !this.itens.isEmpty()) {
+			for (CompraProdutoEntity item : this.itens) {
+				// Altere getPrecoUnitario() e getQuantidade() para os nomes reais da sua CompraProdutoEntity
+				if (item.getPrecoUnitario() != null && item.getQuantidade() != null) {
+
+					BigDecimal qtd = BigDecimal.valueOf(item.getQuantidade());
+
+					BigDecimal valorTotalItem = item.getPrecoUnitario().multiply(qtd);
+
+					total = total.add(valorTotalItem);
+				}
+			}
+		}
+
+		return total;
 	}
 
 
@@ -129,5 +164,13 @@ public class CompraEntity implements Persistable<UUID> {
 
 	public void setSala(SalaEntity sala) {
 		this.sala = sala;
+	}
+
+	public List<CompraProdutoEntity> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<CompraProdutoEntity> itens) {
+		this.itens = itens;
 	}
 }
