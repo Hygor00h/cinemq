@@ -1,22 +1,42 @@
 package com.cinemamq.cinemamq.infrastructure.model.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CompraIngressoDTO implements Serializable {
 
+	@NotNull(message = "É obrigado colocar o nome do usuário!")
+	@Size(message = "Nome do usuário deve ter 5 a 100 caracteres", min = 5, max = 50)
 	private String nomeComprador;
+
+	@NotNull
 	private UUID filmeId;
+
+	@NotNull
 	private String horario;
+
+	@NotNull
 	private UUID sala;
+
+	@NotNull
 	private UUID id;
 
-	public CompraIngressoDTO(String nomeComprador, UUID filmeId, String horario, UUID sala, UUID id) {
+	private List<ItemConsumoDTO> itensConsumo = new ArrayList<>();
+
+
+	public CompraIngressoDTO(String nomeComprador, UUID filmeId, String horario, UUID sala, UUID id, List<ItemConsumoDTO> itensConsumo ) {
 		this.nomeComprador = nomeComprador;
 		this.filmeId = filmeId;
 		this.horario = horario;
 		this.sala = sala;
 		this.id = id;
+		this.itensConsumo = itensConsumo;
 	}
 
 	public CompraIngressoDTO() {
@@ -60,5 +80,13 @@ public class CompraIngressoDTO implements Serializable {
 
 	public void setId(UUID id) {
 		this.id = id;
+	}
+
+	public List<ItemConsumoDTO> getItensConsumo() {
+		return itensConsumo;
+	}
+
+	public void setItensConsumo(List<ItemConsumoDTO> itensConsumo) {
+		this.itensConsumo = itensConsumo;
 	}
 }
