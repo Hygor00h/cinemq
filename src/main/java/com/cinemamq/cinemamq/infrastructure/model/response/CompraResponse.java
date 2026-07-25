@@ -5,16 +5,17 @@ import java.util.List;
 
 public class CompraResponse {
 
+	private String idCompra;
 	private String nomeComprador;
 	private String filme;
 	private String horario;
 	private String sala;
-	private Integer cadeira;
+	private String cadeira;
 	private BigDecimal valorIngresso;
 	private BigDecimal valorTotal;
 	private List<String> itensConsumo;
 
-	public CompraResponse(String nomeComprador, String filme, String horario, String sala, Integer numero, BigDecimal valor,BigDecimal valorTotal,List<String> itensConsumo) {
+	public CompraResponse(String nomeComprador, String filme, String horario, String sala, String numero, BigDecimal valor,BigDecimal valorTotal,List<String> itensConsumo, String idCompra) {
 		this.nomeComprador = nomeComprador;
 		this.filme = filme;
 		this.horario = horario;
@@ -23,6 +24,7 @@ public class CompraResponse {
 		this.valorIngresso = valor;
 		this.valorTotal = valorTotal;
 		this.itensConsumo = itensConsumo;
+		this.idCompra = idCompra;
 	}
 
 	public CompraResponse() {
@@ -60,11 +62,11 @@ public class CompraResponse {
 		this.sala = sala;
 	}
 
-	public Integer getCadeira() {
+	public String getCadeira() {
 		return cadeira;
 	}
 
-	public void setCadeira(Integer cadeira) {
+	public void setCadeira(String cadeira) {
 		this.cadeira = cadeira;
 	}
 
@@ -90,5 +92,13 @@ public class CompraResponse {
 
 	public void setItensConsumo(List<String> itensConsumo) {
 		this.itensConsumo = itensConsumo;
+	}
+
+	public String getIdCompra() {
+		return idCompra;
+	}
+
+	public void setIdCompra(String idCompra) {
+		this.idCompra = idCompra;
 	}
 }

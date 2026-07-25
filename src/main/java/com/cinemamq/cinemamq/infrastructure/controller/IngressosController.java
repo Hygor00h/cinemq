@@ -47,59 +47,66 @@ public class IngressosController {
 	public ResponseEntity<CompraResponse> comprar(@RequestBody @Valid CompraIngressoDTO dto) {
 		UUID pedidoId = UUID.randomUUID();
 
+		// 1. Converte o DTO base para a Entidade
 		CompraEntity valor = compraMapper.toEntity(dto);
 
-		boolean jaExiste = compraRepository.existsByPedidoId(dto.getId(), "SUCESSO");
+		// 2. Busca e valida se TODOS os assentos existem no banco
+		List<AssentoEntity> assentosEntities = assentoRepository.findAllById(dto.getAssentosIds());
 
-		if (jaExiste) {
-			System.out.println("Compra já ocupada!");
-			throw new EventFullException("Esta cadeira já está ocupada!");
+		if (assentosEntities.size() != dto.getAssentosIds().size()) {
+			throw new RuntimeException("Um ou mais assentos informados não existem no banco!");
 		}
 
-//		valor.setSala(salaRepository.findById(dto.getSala()).orElseThrow(() -> new RuntimeException("Sala não encontrada")));
-//		valor.setFilme(filmeRepository.findById(dto.getFilmeId()).orElseThrow(() -> new RuntimeException("Filme não encontrado")));
-//		valor.setAssento(assentoRepository.findById(dto.getId()).orElseThrow(() -> new RuntimeException("Assento não encontrado")));
+		// 3. Valida se algum assento já está ocupado no banco ou tem compra aprovada
+		boolean algumAssentoOcupado = assentosEntities.stream().anyMatch(AssentoEntity::getOcupado)
+						|| dto.getAssentosIds().stream().anyMatch(id -> compraRepository.existsByAssento_IdAndStatus(id, "SUCESSO"));
 
-		SalaEntity salaEntity = salaRepository.findById(dto.getSala()).orElseThrow(() -> new RuntimeException("Sala não encontrada"));
-		FilmeEntity filmeEntity = filmeRepository.findById(dto.getFilmeId()).orElseThrow(() -> new RuntimeException("Filme não encontrado"));
-		AssentoEntity assentoEntity = assentoRepository.findById(dto.getId()).orElseThrow(() -> new RuntimeException("Assento não encontrado"));
+		if (algumAssentoOcupado) {
+			throw new EventFullException("Um ou mais assentos selecionados já estão ocupados!");
+		}
 
+		// 4. Busca Sala e Filme
+		SalaEntity salaEntity = salaRepository.findById(dto.getSala())
+						.orElseThrow(() -> new RuntimeException("Sala não encontrada"));
+		FilmeEntity filmeEntity = filmeRepository.findById(dto.getFilmeId())
+						.orElseThrow(() -> new RuntimeException("Filme não encontrado"));
 
+		// 5. Preenche os dados do pedido
 		valor.setId(pedidoId);
 		valor.setStatus("PROCESSANDO");
 		valor.setHorario(dto.getHorario());
 		valor.setNomeComprador(dto.getNomeComprador());
 		valor.setFilme(filmeEntity);
 		valor.setSala(salaEntity);
-		valor.setAssento(assentoEntity);
+		valor.setAssento(assentosEntities);
 
-
+		// 6. Preenche os produtos de consumo (Bomboniere)
 		if (dto.getItensConsumo() != null && !dto.getItensConsumo().isEmpty()) {
 			List<CompraProdutoEntity> produtosDaCompra = dto.getItensConsumo().stream().map(itemDto -> {
 				CompraProdutoEntity compraProduto = new CompraProdutoEntity();
 
-				// Busca o produto real no banco para pegar o nome e preço oficial da lanchonete
 				ProdutosEntitys produto = produtoRepository.findById(itemDto.getProdutoId())
 								.orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
-				compraProduto.setCompra(valor); // Vincula a este pedido de compra
+				compraProduto.setCompra(valor);
 				compraProduto.setProduto(produto);
 				compraProduto.setQuantidade(itemDto.getQuantidade());
-				compraProduto.setPrecoUnitario(produto.getPreco()); // Garante o preço oficial do banco
+				compraProduto.setPrecoUnitario(produto.getPreco());
 
 				return compraProduto;
 			}).toList();
 
-			valor.setItens(produtosDaCompra); // Seta os itens populados na entidade!
+			valor.setItens(produtosDaCompra);
 		}
 
+		// 7. Salva a compra inicial com status PROCESSANDO
 		compraRepository.save(valor);
 
+		// 8. Envia para a Fila do RabbitMQ
 		PedidoFilaDTO pedidoFila = new PedidoFilaDTO(pedidoId, dto);
-
 		rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_INGRESSOS, RabbitMQConfig.ROUTING_KEY_INGRESSOS, pedidoFila);
 
-
+		// 9. Retorna o DTO de Resposta
 		return ResponseEntity.accepted().body(compraMapper.toResponse(valor));
 	}
 
@@ -114,7 +121,7 @@ public class IngressosController {
 		}
 
 		return switch (compra.getStatus()) {
-			case "PROCESSANDO" -> ResponseEntity.ok().body(compra.getStatus());
+			case "AGUARDANDO_PAGAMENTO" -> ResponseEntity.ok().body(compra.getStatus());
 			case "SUCESSO" -> ResponseEntity.ok(compra);
 			case "ESGOTADO" ->
 							ResponseEntity.badRequest().body(compra.getStatus() + "\"O assento selecionado já foi ocupado por outro cliente.\"");

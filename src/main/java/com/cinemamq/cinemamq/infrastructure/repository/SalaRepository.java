@@ -23,7 +23,7 @@ public interface SalaRepository extends JpaRepository<SalaEntity, UUID> {
 	@Query("SELECT s FROM SalaEntity s WHERE s.filme.id = :filmeId")
 	List<SalaEntity> buscarSalasPorFilmeIdCustom(@Param("filmeId") UUID filmeId);
 
-	@Query("SELECT s FROM SalaEntity s LEFT JOIN FETCH s.assentos WHERE s.id = :salaId")
+	@Query("SELECT s FROM SalaEntity s LEFT JOIN FETCH s.assentos a WHERE s.id = :salaId ORDER BY a.numero ASC")
 	Optional<SalaEntity> buscarSalaComAssentos(@Param("salaId") UUID salaId);
 
 	// Native Query: O mesmo SQL que você rodou no pgAdmin

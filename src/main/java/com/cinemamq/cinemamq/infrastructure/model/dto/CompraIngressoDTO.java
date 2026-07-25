@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,17 +24,17 @@ public class CompraIngressoDTO implements Serializable {
 	private UUID sala;
 
 	@NotNull
-	private UUID id;
+	private List<UUID> assentosIds;
 
 	private List<ItemConsumoDTO> itensConsumo = new ArrayList<>();
 
 
-	public CompraIngressoDTO(String nomeComprador, UUID filmeId, String horario, UUID sala, UUID id, List<ItemConsumoDTO> itensConsumo ) {
+	public CompraIngressoDTO(String nomeComprador, UUID filmeId, String horario, UUID sala, List<UUID> assentosIds, List<ItemConsumoDTO> itensConsumo ) {
 		this.nomeComprador = nomeComprador;
 		this.filmeId = filmeId;
 		this.horario = horario;
 		this.sala = sala;
-		this.id = id;
+		this.assentosIds = assentosIds;
 		this.itensConsumo = itensConsumo;
 	}
 
@@ -74,19 +73,19 @@ public class CompraIngressoDTO implements Serializable {
 		this.sala = sala;
 	}
 
-	public UUID getId() {
-		return id;
-	}
-
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
 	public List<ItemConsumoDTO> getItensConsumo() {
 		return itensConsumo;
 	}
 
 	public void setItensConsumo(List<ItemConsumoDTO> itensConsumo) {
 		this.itensConsumo = itensConsumo;
+	}
+
+	public List<UUID> getAssentosIds() {
+		return assentosIds;
+	}
+
+	public void setAssentosIds(List<UUID> assentosIds) {
+		this.assentosIds = assentosIds;
 	}
 }

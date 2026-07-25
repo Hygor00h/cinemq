@@ -25,9 +25,13 @@ public class CompraEntity implements Persistable<UUID> {
 	private String mensagemErro;
 
 
-	@ManyToOne
-	@JoinColumn(name = "assento_id")
-	private AssentoEntity assento;
+
+	@ManyToMany
+	@JoinTable(
+					name = "compra_assento", // Nome da tabela intermediária no banco
+					joinColumns = @JoinColumn(name = "compra_id"),
+					inverseJoinColumns = @JoinColumn(name = "assento_id"))
+	private List<AssentoEntity> assento;
 
 	@ManyToOne
 	@JoinColumn(name = "sala_id")
@@ -43,7 +47,7 @@ public class CompraEntity implements Persistable<UUID> {
 	public CompraEntity() {
 	}
 
-	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, AssentoEntity assento, SalaEntity sala, FilmeEntity filme, List<CompraProdutoEntity> itens, boolean isNew) {
+	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, List<AssentoEntity> assento, SalaEntity sala, FilmeEntity filme, List<CompraProdutoEntity> itens, boolean isNew) {
 		this.id = id;
 		this.nomeComprador = nomeComprador;
 		this.horario = horario;
@@ -64,21 +68,19 @@ public class CompraEntity implements Persistable<UUID> {
 	public BigDecimal getCalculaValorTotal() {
 		BigDecimal total = BigDecimal.ZERO;
 
-		// 1. Soma o valor do ingresso se o filme estiver associado
-		if (this.filme != null && this.filme.getValorIngresso() != null) {
-			total = total.add(this.filme.getValorIngresso());
+		// 1. Multiplica o valor do ingresso pela QUANTIDADE de assentos comprados
+		if (this.filme != null && this.filme.getValorIngresso() != null && this.assento != null && !this.assento.isEmpty()) {
+			BigDecimal qtdIngressos = BigDecimal.valueOf(this.assento.size());
+			BigDecimal totalIngressos = this.filme.getValorIngresso().multiply(qtdIngressos);
+			total = total.add(totalIngressos);
 		}
 
-		// 2. Soma o valor de cada produto da lanchonete (Preço x Quantidade)
+		// 2. Soma o valor dos produtos da lanchonete (Preço x Quantidade)
 		if (this.itens != null && !this.itens.isEmpty()) {
 			for (CompraProdutoEntity item : this.itens) {
-				// Altere getPrecoUnitario() e getQuantidade() para os nomes reais da sua CompraProdutoEntity
 				if (item.getPrecoUnitario() != null && item.getQuantidade() != null) {
-
 					BigDecimal qtd = BigDecimal.valueOf(item.getQuantidade());
-
 					BigDecimal valorTotalItem = item.getPrecoUnitario().multiply(qtd);
-
 					total = total.add(valorTotalItem);
 				}
 			}
@@ -135,11 +137,11 @@ public class CompraEntity implements Persistable<UUID> {
 		this.filme = filme;
 	}
 
-	public AssentoEntity getAssento() {
+	public List<AssentoEntity> getAssento() {
 		return assento;
 	}
 
-	public void setAssento(AssentoEntity assento) {
+	public void setAssento(List<AssentoEntity> assento) {
 		this.assento = assento;
 	}
 

@@ -21,6 +21,7 @@ public class SalaEntity {
 	private FilmeEntity filme;
 
 	@OneToMany(mappedBy = "sala", fetch = FetchType.LAZY)
+	@OrderBy("numero ASC")
 	private Set<AssentoEntity> assentos = new LinkedHashSet<>();
 
 	public SalaEntity() {
