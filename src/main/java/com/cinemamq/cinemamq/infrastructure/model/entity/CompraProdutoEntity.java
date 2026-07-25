@@ -3,6 +3,7 @@ package com.cinemamq.cinemamq.infrastructure.model.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity

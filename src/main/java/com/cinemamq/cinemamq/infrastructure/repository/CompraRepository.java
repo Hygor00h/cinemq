@@ -12,7 +12,8 @@ import java.util.UUID;
 public interface CompraRepository extends JpaRepository<CompraEntity, UUID> {
 
 
+	@Query("SELECT COUNT(c) > 0 FROM CompraEntity c JOIN c.assento a WHERE a.id = :assentoId AND c.status = :status")
+	Boolean existsByPedidoId(@Param("assentoId") UUID assentoId, @Param("status") String status);
 
-		@Query("SELECT COUNT(c) > 0 FROM CompraEntity c WHERE c.assento.id = :assentoId AND c.status = :status")
-		Boolean existsByPedidoId(@Param("assentoId") UUID assentoId,@Param("status") String status);
+	boolean existsByAssento_IdAndStatus(UUID assentoId, String status);
 }

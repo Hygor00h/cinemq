@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -23,9 +24,6 @@ public class IngressosConsumer {
 	@Autowired
 	private AssentoRepository assentoRepository;
 
-	@Autowired
-	private FilmeRepository filmeRepository;
-
 	@RabbitListener(queues = RabbitMQConfig.FILA_INGRESSOS)
 	@Transactional
 	public void processarCompra(PedidoFilaDTO pedido) {
@@ -33,36 +31,51 @@ public class IngressosConsumer {
 			CompraEntity compra = compraRepository.findById(pedido.getPedidoId())
 							.orElseThrow(() -> new RuntimeException("Compra não encontrada"));
 
-			AssentoEntity assento = assentoRepository.findById(pedido.getDados().getId())
-							.orElseThrow(() -> new RuntimeException("Assento não encontrado"));
+			List<UUID> assentosIds = pedido.getDados().getAssentosIds();
+			List<AssentoEntity> assentos = assentoRepository.findAllById(assentosIds);
 
-			UUID salaDoAssentoId = assento.getSala().getId();
-			UUID filmeDaSalaId = assento.getSala().getFilme().getId();
-
-			if (!salaDoAssentoId.equals(pedido.getDados().getSala()) || !filmeDaSalaId.equals(pedido.getDados().getFilmeId())) {
+			if (assentos.isEmpty() || assentos.size() != assentosIds.size()) {
 				compra.setStatus("ERRO_VALIDACAO");
-				compra.setMensagemErro("O assento selecionado não pertence à sala ou ao filme informado.");
+				compra.setMensagemErro("Um ou mais assentos selecionados não foram encontrados.");
 				compraRepository.save(compra);
 				return;
 			}
 
-			if (assento.getOcupado()) {
+			for (AssentoEntity assento : assentos) {
+				UUID salaDoAssentoId = assento.getSala().getId();
+				UUID filmeDaSalaId = assento.getSala().getFilme().getId();
+
+				if (!salaDoAssentoId.equals(pedido.getDados().getSala()) || !filmeDaSalaId.equals(pedido.getDados().getFilmeId())) {
+					compra.setStatus("ERRO_VALIDACAO");
+					compra.setMensagemErro("Um ou mais assentos selecionados não pertencem à sala ou ao filme informado.");
+					compraRepository.save(compra);
+					return;
+				}
+			}
+
+			boolean algumOcupado = assentos.stream().anyMatch(AssentoEntity::getOcupado);
+
+			if (algumOcupado) {
 				compra.setStatus("ESGOTADO");
-				compra.setMensagemErro("O assento selecionado já foi ocupado por outro cliente.");
+				compra.setMensagemErro("Um ou mais assentos selecionados já foram ocupados por outro cliente.");
 				compraRepository.save(compra);
 				return;
 			}
 
-			assento.setOcupado(true);
-			assentoRepository.save(assento);
+			// Marca os assentos como ocupados/reservados
+			for (AssentoEntity assento : assentos) {
+				assento.setOcupado(true);
+			}
+			assentoRepository.saveAll(assentos);
 
-			compra.setStatus("SUCESSO");
+			// 💡 ALTERAÇÃO AQUI: Em vez de SUCESSO, fica aguardando o pagamento
+			compra.setStatus("AGUARDANDO_PAGAMENTO");
 			compraRepository.save(compra);
 
-			System.out.println("Pedido " + pedido.getPedidoId() + " processado com sucesso!");
+			System.out.println("Reserva concluída! Pedido " + pedido.getPedidoId() + " aguardando pagamento.");
 
 		} catch (Exception e) {
-			System.err.println("Erro ao processar a compra: " + e.getMessage());
+			System.err.println("Erro ao processar a compra na fila: " + e.getMessage());
 		}
 	}
 }
