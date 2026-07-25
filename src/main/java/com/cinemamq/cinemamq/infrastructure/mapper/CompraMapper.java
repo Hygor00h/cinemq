@@ -14,24 +14,18 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CompraMapper {
 
-	// 1. De Entity para DTO (Pegamos o ID da sala, filme e a lista de IDs dos assentos)
 	@Mapping(target = "sala", source = "sala.id")
 	@Mapping(target = "filmeId", source = "filme.id")
-	@Mapping(target = "assentosIds", source = "assento") // Utiliza o método auxiliar mapAssentoToUuid abaixo
+	@Mapping(target = "assentosIds", source = "assento")
 	CompraIngressoDTO toDto(CompraEntity compraEntity);
-
 
 	default UUID mapAssentoToUuid(AssentoEntity assento) {
 		return (assento != null) ? assento.getId() : null;
 	}
 
-
-	// 2. Mapeamento de LISTAS
 	List<CompraIngressoDTO> toDtoList(List<CompraEntity> compras);
 	List<CompraEntity> toEntityList(List<CompraIngressoDTO> dtos);
 
-	// 3. De DTO para Entity (Para salvar no Banco)
-	// Ignoramos 'assentos' no plural, já que ele é populado via Service/Controller
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "sala", ignore = true)
 	@Mapping(target = "filme", ignore = true)
@@ -39,18 +33,16 @@ public interface CompraMapper {
 	@Mapping(target = "itens", ignore = true)
 	CompraEntity toEntity(CompraIngressoDTO dto);
 
-	// 4. De Entity para Response (Ajustado para múltiplos assentos)
 	@Mapping(target = "idCompra", source = "id")
 	@Mapping(target = "nomeComprador", source = "nomeComprador")
 	@Mapping(target = "filme", source = "filme.nome")
 	@Mapping(target = "horario", source = "horario")
 	@Mapping(target = "sala", source = "sala.nomeSala")
-	@Mapping(target = "cadeira", source = "assento") // Converte a Lista<AssentoEntity> para String
+	@Mapping(target = "cadeira", source = "assento")
 	@Mapping(target = "valorIngresso", source = "filme.valorIngresso")
 	@Mapping(target = "itensConsumo", source = "itens")
 	CompraResponse toResponse(CompraEntity compraEntity);
 
-	// Mapeia a lista de assentos para uma String formatada (ex: "A1, A2, A3")
 	default String mapAssentosToString(List<AssentoEntity> assentos) {
 		if (assentos == null || assentos.isEmpty()) {
 			return "";

@@ -1,12 +1,5 @@
 package com.cinemamq.cinemamq.infrastructure.model.response;
 
-import com.cinemamq.cinemamq.infrastructure.model.entity.AssentoEntity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class AssentoResponse {
@@ -15,8 +8,6 @@ public class AssentoResponse {
 	private Integer numero;
 	private Boolean ocupado;
 
-//	@OneToMany(mappedBy = "sala", fetch = FetchType.LAZY)
-//	private Set<AssentoEntity> assentos = new LinkedHashSet<>();
 
 	public AssentoResponse(UUID id, Integer numero, Boolean ocupado) {
 		this.id = id;

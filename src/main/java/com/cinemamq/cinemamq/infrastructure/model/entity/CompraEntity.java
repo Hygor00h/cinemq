@@ -11,7 +11,7 @@ import java.util.*;
 @Entity
 @Table(name = "compras")
 public class CompraEntity implements Persistable<UUID> {
-//criar o ingresso
+
 	@Id
 	private UUID id;
 
@@ -64,18 +64,15 @@ public class CompraEntity implements Persistable<UUID> {
 	}
 
 
-	// 💡 Método para calcular o valor total (Ingresso + Lanchonete)
 	public BigDecimal getCalculaValorTotal() {
 		BigDecimal total = BigDecimal.ZERO;
 
-		// 1. Multiplica o valor do ingresso pela QUANTIDADE de assentos comprados
 		if (this.filme != null && this.filme.getValorIngresso() != null && this.assento != null && !this.assento.isEmpty()) {
 			BigDecimal qtdIngressos = BigDecimal.valueOf(this.assento.size());
 			BigDecimal totalIngressos = this.filme.getValorIngresso().multiply(qtdIngressos);
 			total = total.add(totalIngressos);
 		}
 
-		// 2. Soma o valor dos produtos da lanchonete (Preço x Quantidade)
 		if (this.itens != null && !this.itens.isEmpty()) {
 			for (CompraProdutoEntity item : this.itens) {
 				if (item.getPrecoUnitario() != null && item.getQuantidade() != null) {
@@ -96,12 +93,12 @@ public class CompraEntity implements Persistable<UUID> {
 	@PostLoad
 	@PostPersist
 	public void markNotNew() {
-		this.isNew = false; // Se buscou do banco ou acabou de salvar, não é mais nova
+		this.isNew = false;
 	}
 
 	@Override
 	public boolean isNew() {
-		return this.isNew; // O Spring Data vai ler isso aqui antes de decidir entre persist e merge
+		return this.isNew;
 	}
 
 	@Override

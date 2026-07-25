@@ -62,13 +62,13 @@ public class IngressosConsumer {
 				return;
 			}
 
-			// Marca os assentos como ocupados/reservados
+
 			for (AssentoEntity assento : assentos) {
 				assento.setOcupado(true);
 			}
 			assentoRepository.saveAll(assentos);
 
-			// 💡 ALTERAÇÃO AQUI: Em vez de SUCESSO, fica aguardando o pagamento
+
 			compra.setStatus("AGUARDANDO_PAGAMENTO");
 			compraRepository.save(compra);
 

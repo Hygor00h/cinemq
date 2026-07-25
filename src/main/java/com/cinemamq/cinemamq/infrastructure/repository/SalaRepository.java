@@ -14,11 +14,6 @@ import java.util.UUID;
 @Repository
 public interface SalaRepository extends JpaRepository<SalaEntity, UUID> {
 
-	//Optional<SalaEntity> findById(UUID filmeId);
-
-	//1 DISTINCT depois do SELECT para resolver a multiplicação no json ou usar o SET na entity no logar do LIST
-//	@Query("SELECT DISTINCT s FROM SalaEntity s LEFT JOIN FETCH s.assentos WHERE s.filme.id = :filmeId")
-//	SalaEntity buscarSalasPorFilmeIdCustom(@Param("filmeId") UUID filmeId);
 
 	@Query("SELECT s FROM SalaEntity s WHERE s.filme.id = :filmeId")
 	List<SalaEntity> buscarSalasPorFilmeIdCustom(@Param("filmeId") UUID filmeId);
@@ -26,9 +21,4 @@ public interface SalaRepository extends JpaRepository<SalaEntity, UUID> {
 	@Query("SELECT s FROM SalaEntity s LEFT JOIN FETCH s.assentos a WHERE s.id = :salaId ORDER BY a.numero ASC")
 	Optional<SalaEntity> buscarSalaComAssentos(@Param("salaId") UUID salaId);
 
-	// Native Query: O mesmo SQL que você rodou no pgAdmin
-//	@Query(value = "SELECT s.* FROM public.salas s " +
-//					"INNER JOIN public.filmes f ON s.filme_id = f.id " +
-//					"WHERE f.id = :filmeId", nativeQuery = true)
-//	List<SalaEntity> buscarSalasPorFilmeIdNative(@Param("filmeId") UUID filmeId);
 }

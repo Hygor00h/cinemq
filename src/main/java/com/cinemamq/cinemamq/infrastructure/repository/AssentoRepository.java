@@ -13,13 +13,6 @@ import java.util.UUID;
 @Repository
 public interface AssentoRepository extends JpaRepository<AssentoEntity, UUID> {
 
-//	@Query(value = "SELECT * FROM public.assentos")
-//	List<AssentoEntity>findByFilmeIdAndOcupadoFalse(UUID filmeId);
-
-	//Optional<AssentoEntity> findById(UUID id);
-
 	List<AssentoEntity> findBySalaIdAndOcupadoFalse(UUID salaId);
 
-//	@Query("SELECT a FROM AssentoEntity a WHERE a.filme.id = :filmeId AND a.ocupado = false")
-//	List<AssentoEntity> buscarAssentosDisponiveisPorFilme(@Param("filmeId") UUID filmeId);
 }
