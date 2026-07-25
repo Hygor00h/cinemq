@@ -18,42 +18,35 @@ import java.math.BigDecimal;
 public class PagamentoController {
 
 
-	@Autowired
-	private CompraRepository compraRepository;
+
+	private final CompraRepository compraRepository;
+
+	public PagamentoController(CompraRepository compraRepository) {
+		this.compraRepository = compraRepository;
+	}
 
 	@PostMapping("/simular")
 	public ResponseEntity<String> simularPagamento(@RequestBody @Valid PagamentoDTO dto) {
 		CompraEntity compra = compraRepository.findById(dto.getPedidoId())
 						.orElseThrow(() -> new RuntimeException("Compra não encontrada"));
-
-		// Validações de estado prévio
 		if ("SUCESSO".equals(compra.getStatus())) {
 			return ResponseEntity.badRequest().body("Este pedido já foi pago!");
 		}
-
 		if (!"AGUARDANDO_PAGAMENTO".equals(compra.getStatus())) {
-
 			return ResponseEntity.badRequest().body("Este pedido não está disponível para pagamento. Status atual: " + compra.getStatus());
 		}
-
-		// Calcula o valor total esperado (Ingressos + Lanchonete)
 		BigDecimal valorEsperado = compra.getCalculaValorTotal();
-
-		// Compara com o valor enviado no DTO
 		if (dto.getValor() == null || dto.getValor().compareTo(valorEsperado) != 0) {
 			compra.setStatus("PAGAMENTO_INCORRETO");
 			compra.setMensagemErro("Valor pago (" + dto.getValor() + ") é diferente do valor cobrado (" + valorEsperado + ")");
 			compraRepository.save(compra);
-
 			return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
 							.body("Valor incorreto! O valor necessário é R$ " + valorEsperado);
 		}
-
-		// Pagamento aprovado
 		compra.setStatus("SUCESSO");
 		compra.setMensagemErro(null);
 		compraRepository.save(compra);
-
 		return ResponseEntity.ok("Pagamento de R$ " + dto.getValor() + " processado com sucesso! Pedido finalizado.");
 	}
+
 }

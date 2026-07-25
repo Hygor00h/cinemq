@@ -18,9 +18,8 @@ import java.util.UUID;
 public class ProdutosController {
 
 
-	private ProdutoRepository produtoRepository;
+	private final ProdutoRepository produtoRepository;
 
-	@Autowired
 	public ProdutosController(ProdutoRepository produtoRepository) {
 		this.produtoRepository = produtoRepository;
 	}

@@ -49,7 +49,7 @@ public class FilmeController {
 	public ResponseEntity<List<SalaResponse>> obterSalasPorFilme(@PathVariable("filmeId") UUID filmeId) {
 
 		List<SalaEntity> salas = salaRepository.buscarSalasPorFilmeIdCustom(filmeId);
-//StringUtils.isEmpty(String.valueOf(salas))
+
 		if (salas.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}

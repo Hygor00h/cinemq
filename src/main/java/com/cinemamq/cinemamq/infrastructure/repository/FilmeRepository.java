@@ -10,5 +10,4 @@ import java.util.UUID;
 @Repository
 public interface FilmeRepository extends JpaRepository<FilmeEntity, UUID> {
 
-	//Optional<FilmeEntity> findById(UUID id);
 }
