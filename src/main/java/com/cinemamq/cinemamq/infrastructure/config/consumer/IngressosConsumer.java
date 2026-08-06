@@ -4,6 +4,7 @@ import com.cinemamq.cinemamq.infrastructure.config.RabbitMQConfig;
 import com.cinemamq.cinemamq.infrastructure.model.dto.PedidoFilaDTO;
 import com.cinemamq.cinemamq.infrastructure.model.entity.AssentoEntity;
 import com.cinemamq.cinemamq.infrastructure.model.entity.CompraEntity;
+import com.cinemamq.cinemamq.infrastructure.model.enums.StatusProcesso;
 import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.CompraRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
@@ -35,7 +36,7 @@ public class IngressosConsumer {
 			List<AssentoEntity> assentos = assentoRepository.findAllById(assentosIds);
 
 			if (assentos.isEmpty() || assentos.size() != assentosIds.size()) {
-				compra.setStatus("ERRO_VALIDACAO");
+				compra.setStatus(StatusProcesso.ERRO_VALIDACAO);
 				compra.setMensagemErro("Um ou mais assentos selecionados não foram encontrados.");
 				compraRepository.save(compra);
 				return;
@@ -46,7 +47,7 @@ public class IngressosConsumer {
 				UUID filmeDaSalaId = assento.getSala().getFilme().getId();
 
 				if (!salaDoAssentoId.equals(pedido.getDados().getSala()) || !filmeDaSalaId.equals(pedido.getDados().getFilmeId())) {
-					compra.setStatus("ERRO_VALIDACAO");
+					compra.setStatus(StatusProcesso.ERRO_VALIDACAO);
 					compra.setMensagemErro("Um ou mais assentos selecionados não pertencem à sala ou ao filme informado.");
 					compraRepository.save(compra);
 					return;
@@ -56,7 +57,7 @@ public class IngressosConsumer {
 			boolean algumOcupado = assentos.stream().anyMatch(AssentoEntity::getOcupado);
 
 			if (algumOcupado) {
-				compra.setStatus("ESGOTADO");
+				compra.setStatus(StatusProcesso.ESGOTADO);
 				compra.setMensagemErro("Um ou mais assentos selecionados já foram ocupados por outro cliente.");
 				compraRepository.save(compra);
 				return;
@@ -69,7 +70,7 @@ public class IngressosConsumer {
 			assentoRepository.saveAll(assentos);
 
 
-			compra.setStatus("AGUARDANDO_PAGAMENTO");
+			compra.setStatus(StatusProcesso.AGUARDANDO_PAGAMENTO);
 			compraRepository.save(compra);
 
 			System.out.println("Reserva concluída! Pedido " + pedido.getPedidoId() + " aguardando pagamento.");

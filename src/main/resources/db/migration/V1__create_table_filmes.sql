@@ -73,7 +73,7 @@ CREATE TABLE compra_produtos (
 
 
 INSERT INTO filmes (nome, genero, duracao, faixa_etaria, valor_ingresso) VALUES
-    ('Velozes e Furiosos', 'Ação/Drama', '3 ho', 16, 15.00),
+    ('Velozes e Furiosos', 'Ação/Drama', '3 horas', 16, 15.00),
     ('Carros', 'Animação', '2 horas', 0, 12.00);
 
 INSERT INTO salas (nome_sala, filme_id) VALUES
@@ -97,11 +97,24 @@ INSERT INTO assentos (numero_visivel, ocupado, sala_id) VALUES
     (14, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
     (15, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
     (16, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
+    (17, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
     (18, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
     (19, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1)),
     (20, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 01 - IMAX' LIMIT 1));
 
+INSERT INTO assentos (numero_visivel, ocupado, sala_id) VALUES
+    (1, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (2, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (3, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (4, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (5, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (6, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (7, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (8, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (9, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1)),
+    (10, false, (SELECT id FROM salas WHERE nome_sala = 'SALA 02 - VIP' LIMIT 1));
+
 INSERT INTO produtos (nome, descricao, preco, categoria, estoque) VALUES
     ('Pipoca de Cinema G', 'Pipoca salgada quentinha na manteiga', 25.00, 'PIPOCA', 100),
-    ('Coca-Cola 700ml', 'Refrigerante gelado postmix', 14.00, 'BEBIDA', 200),
-    ('Chocolate M&M amendoim', 'Pacote de m&m tradicional', 12.00, 'DOCE', 150);
+    ('Refrigerante 700ml', 'Refrigerante gelado', 14.00, 'BEBIDA', 200),
+    ('Chocolate com amendoim', 'tradicional', 12.00, 'DOCE', 150);

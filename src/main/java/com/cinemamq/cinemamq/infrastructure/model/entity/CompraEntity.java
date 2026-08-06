@@ -1,5 +1,6 @@
 package com.cinemamq.cinemamq.infrastructure.model.entity;
 
+import com.cinemamq.cinemamq.infrastructure.model.enums.StatusProcesso;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Persistable;
@@ -19,7 +20,10 @@ public class CompraEntity implements Persistable<UUID> {
 	private String nomeComprador;
 
 	private String horario;
-	private String status;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private StatusProcesso status;
 
 	@Column(name = "mensagem_erro")
 	private String mensagemErro;
@@ -47,7 +51,7 @@ public class CompraEntity implements Persistable<UUID> {
 	public CompraEntity() {
 	}
 
-	public CompraEntity(UUID id, String nomeComprador, String horario, String status, String mensagemErro, List<AssentoEntity> assento, SalaEntity sala, FilmeEntity filme, List<CompraProdutoEntity> itens, boolean isNew) {
+	public CompraEntity(UUID id, String nomeComprador, String horario, StatusProcesso status, String mensagemErro, List<AssentoEntity> assento, SalaEntity sala, FilmeEntity filme, List<CompraProdutoEntity> itens) {
 		this.id = id;
 		this.nomeComprador = nomeComprador;
 		this.horario = horario;
@@ -57,7 +61,6 @@ public class CompraEntity implements Persistable<UUID> {
 		this.sala = sala;
 		this.filme = filme;
 		this.itens = itens;
-		this.isNew = isNew;
 	}
 
 	public CompraEntity(String s, String horario, FilmeEntity filme, AssentoEntity assento, Double valorIngresso, List<CompraProdutoEntity> itens) {
@@ -142,10 +145,10 @@ public class CompraEntity implements Persistable<UUID> {
 		this.assento = assento;
 	}
 
-	public String getStatus() {
+	public StatusProcesso getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(StatusProcesso status) {
 		this.status = status;
 	}
 

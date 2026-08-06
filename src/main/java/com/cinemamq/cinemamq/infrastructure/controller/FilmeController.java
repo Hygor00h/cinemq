@@ -2,7 +2,6 @@ package com.cinemamq.cinemamq.infrastructure.controller;
 
 import com.cinemamq.cinemamq.infrastructure.mapper.AssentoMapper;
 import com.cinemamq.cinemamq.infrastructure.mapper.SalaMapper;
-import com.cinemamq.cinemamq.infrastructure.model.dto.SalaDto;
 import com.cinemamq.cinemamq.infrastructure.model.entity.FilmeEntity;
 import com.cinemamq.cinemamq.infrastructure.model.entity.SalaEntity;
 import com.cinemamq.cinemamq.infrastructure.model.response.AssentoResponse;
@@ -10,13 +9,10 @@ import com.cinemamq.cinemamq.infrastructure.model.response.SalaResponse;
 import com.cinemamq.cinemamq.infrastructure.repository.AssentoRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.FilmeRepository;
 import com.cinemamq.cinemamq.infrastructure.repository.SalaRepository;
-import io.micrometer.common.util.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -24,24 +20,23 @@ import java.util.UUID;
 @RequestMapping("/filmes")
 public class FilmeController {
 
-	@Autowired
-	private FilmeRepository filmeRepository;
 
-	@Autowired
-	private AssentoRepository assentoRepository;
+	private final FilmeRepository filmeRepository;
+	private final AssentoRepository assentoRepository;
+	private final SalaRepository salaRepository;
+	private final SalaMapper salaMapper;
+	private final AssentoMapper assentoMapper;
 
-	@Autowired
-	private SalaRepository salaRepository;
-
-	@Autowired
-	private SalaMapper salaMapper;
-
-	@Autowired
-	private AssentoMapper	assentoMapper;
-
+	public FilmeController(FilmeRepository filmeRepository, AssentoRepository assentoRepository, SalaRepository salaRepository, SalaMapper salaMapper, AssentoMapper assentoMapper) {
+		this.filmeRepository = filmeRepository;
+		this.assentoRepository = assentoRepository;
+		this.salaRepository = salaRepository;
+		this.salaMapper = salaMapper;
+		this.assentoMapper = assentoMapper;
+	}
 
 	@GetMapping
-	public List<FilmeEntity> findAll(){
+	public List<FilmeEntity> findAll() {
 		return filmeRepository.findAll();
 	}
 
