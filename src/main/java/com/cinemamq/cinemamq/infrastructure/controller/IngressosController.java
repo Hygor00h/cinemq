@@ -6,11 +6,11 @@ import com.cinemamq.cinemamq.infrastructure.mapper.CompraMapper;
 import com.cinemamq.cinemamq.infrastructure.model.dto.CompraIngressoDTO;
 import com.cinemamq.cinemamq.infrastructure.model.dto.PedidoFilaDTO;
 import com.cinemamq.cinemamq.infrastructure.model.entity.*;
+import com.cinemamq.cinemamq.infrastructure.model.enums.StatusProcesso;
 import com.cinemamq.cinemamq.infrastructure.model.response.CompraResponse;
 import com.cinemamq.cinemamq.infrastructure.repository.*;
 import jakarta.validation.Valid;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +29,7 @@ public class IngressosController {
 	private final FilmeRepository filmeRepository;
 	private final SalaRepository salaRepository;
 	private final CompraMapper compraMapper;
-	private final ProdutoRepository	produtoRepository;
+	private final ProdutoRepository produtoRepository;
 
 	public IngressosController(RabbitTemplate rabbitTemplate, CompraRepository compraRepository, AssentoRepository assentoRepository, FilmeRepository filmeRepository, SalaRepository salaRepository, CompraMapper compraMapper, ProdutoRepository produtoRepository) {
 		this.rabbitTemplate = rabbitTemplate;
@@ -50,7 +50,7 @@ public class IngressosController {
 			throw new RuntimeException("Um ou mais assentos informados não existem no banco!");
 		}
 		boolean algumAssentoOcupado = assentosEntities.stream().anyMatch(AssentoEntity::getOcupado)
-						|| dto.getAssentosIds().stream().anyMatch(id -> compraRepository.existsByAssento_IdAndStatus(id, "SUCESSO"));
+						|| dto.getAssentosIds().stream().anyMatch(id -> compraRepository.existsByAssento_IdAndStatus(id, StatusProcesso.SUCESSO));
 		if (algumAssentoOcupado) {
 			throw new EventFullException("Um ou mais assentos selecionados já estão ocupados!");
 		}
@@ -59,7 +59,7 @@ public class IngressosController {
 		FilmeEntity filmeEntity = filmeRepository.findById(dto.getFilmeId())
 						.orElseThrow(() -> new RuntimeException("Filme não encontrado"));
 		valor.setId(pedidoId);
-		valor.setStatus("PROCESSANDO");
+		valor.setStatus(StatusProcesso.PROCESSANDO);
 		valor.setHorario(dto.getHorario());
 		valor.setNomeComprador(dto.getNomeComprador());
 		valor.setFilme(filmeEntity);
@@ -96,16 +96,12 @@ public class IngressosController {
 		}
 
 		return switch (compra.getStatus()) {
-			case "AGUARDANDO_PAGAMENTO" -> ResponseEntity.ok().body(compra.getStatus());
-			case "SUCESSO" -> ResponseEntity.ok(compra);
-			case "ESGOTADO" ->
+			case StatusProcesso.AGUARDANDO_PAGAMENTO -> ResponseEntity.ok().body(compra.getStatus());
+			case StatusProcesso.SUCESSO -> ResponseEntity.ok(compra);
+			case StatusProcesso.ESGOTADO ->
 							ResponseEntity.badRequest().body(compra.getStatus() + "\"O assento selecionado já foi ocupado por outro cliente.\"");
 			default -> ResponseEntity.internalServerError().build();
 		};
 	}
 
-//	@PostMapping("/confirma")
-//	public ResponseEntity<> confirmaPagamento(){
-//
-//	}
 }
